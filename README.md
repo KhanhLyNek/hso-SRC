@@ -1,54 +1,68 @@
-<h2 align="center">CÁCH CHẠY SERVER</h2>
+<h2 align="center">CÀI ĐẶT MÔI TRƯỜNG</h2>Bước 1: Cài đặt Java 17
 
-**Bước 1:** Cài đặt Java 17
-
-```bash
 pkg install openjdk-17 -y
-```
 
-**Bước 2:** Truy cập thư mục chứa source server
+Bước 2: Cài đặt Maven
 
-```bash
+pkg install maven -y
+
+Kiểm tra:
+
+java -version
+mvn -version
+
+---
+
+<h2 align="center">BUILD SOURCE SERVER</h2>Bước 1: Truy cập thư mục chứa source server
+
 cd /storage/download/hso
-```
 
-**Bước 3:** Chạy server
+Bước 2: Build source bằng Maven
 
-```bash
+mvn clean package
+
+Sau khi build thành công, file server sẽ được tạo trong thư mục:
+
+target/
+
+Với cấu hình hiện tại, file cần chạy là:
+
+target/HSO_Re_2-1.0-jar-with-dependencies.jar
+
+---
+
+<h2 align="center">CÁCH CHẠY SERVER</h2>Bước 1: Truy cập thư mục source
+
+cd /storage/download/hso
+
+Bước 2: Chạy server
+
 java -jar -server target/HSO_Re_2-1.0-jar-with-dependencies.jar
-```
 
+---
 
-<h2 align="center">CÁCH SỬA IP FILE CLIENT</h2>
+<h2 align="center">CÁCH SỬA IP FILE CLIENT</h2>Sửa IP:
 
-**Sửa IP:**
-```text
 File: dw.class
 Dòng: 51, 63, ...
-```
 
-**Sửa Port:**
-```text
+Sửa Port:
+
 File: ft.class
 Dòng: 273 -> 278
-Port được mã hóa bằng HEX
+
+Port được mã hóa bằng HEX.
 
 Ví dụ:
+
 19129 = 0x4AB9
-```
 
+---
 
-<h2 align="center">CẤU HÌNH KHÁC</h2>
+<h2 align="center">CẤU HÌNH KHÁC</h2>Kết nối Database:
 
-**Kết nối database**
-```text
 File cấu hình: hso.conf
-```
 
-**Client**
-```text
-client/hso-client.jar
-```
 ## ⚠️ Disclaimer
 
 > **Mục đích sử dụng:** Source code này được công khai nhằm mục đích **học tập, nghiên cứu và tham khảo**.
