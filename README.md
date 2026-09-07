@@ -1,52 +1,70 @@
-<h2 align="center">CÀI ĐẶT MÔI TRƯỜNG</h2>Bước 1: Cài đặt Java 17
+<h2 align="center">CÁCH CÀI ĐẶT VÀ CHẠY SERVER</h2>Bước 1: Cài đặt Git
 
-pkg install openjdk-17 -y
+```pkg install git -y```
 
-Bước 2: Cài đặt Maven
+Bước 2: Clone source server
 
-pkg install maven -y
+```git clone https://github.com/ALKAstraverse/hso-server```
+
+Sau khi clone xong, truy cập vào thư mục source:
+
+```cd hso-server```
+
+Kiểm tra đường dẫn hiện tại:
+
+```pwd```
+
+Ví dụ Termux sẽ hiển thị:
+
+```/data/data/com.termux/files/home/hso-server```
+
+«Lưu ý: Đường dẫn có thể khác tùy thiết bị và cách cài đặt Termux. Hãy dùng kết quả của "pwd" làm đường dẫn source server.»
+
+---
+
+<h2 align="center">CÀI ĐẶT JAVA & MAVEN</h2>Bước 3: Cài đặt Java 17
+
+```pkg install openjdk-17 -y```
+
+Bước 4: Cài đặt Maven
+
+```pkg install maven -y```
 
 Kiểm tra:
 
-java -version
-mvn -version
+```java -version```
+```mvn -version```
 
 ---
 
-<h2 align="center">BUILD SOURCE SERVER</h2>Bước 1: Truy cập thư mục chứa source server
+<h2 align="center">BUILD SOURCE SERVER</h2>Bước 5: Build server
 
-cd /storage/download/hso
+Nếu đang ở thư mục "hso-server":
 
-Bước 2: Build source bằng Maven
+```mvn clean package```
 
-mvn clean package
+Sau khi build thành công, file ".jar" sẽ được tạo trong:
 
-Sau khi build thành công, file server sẽ được tạo trong thư mục:
+```target/```
 
-target/
+File server:
 
-Với cấu hình hiện tại, file cần chạy là:
-
-target/HSO_Re_2-1.0-jar-with-dependencies.jar
+```target/HSO_Re_2-1.0-jar-with-dependencies.jar```
 
 ---
 
-<h2 align="center">CÁCH CHẠY SERVER</h2>Bước 1: Truy cập thư mục source
+<h2 align="center">CHẠY SERVER</h2>Từ thư mục "hso-server":
 
-cd /storage/download/hso
-
-Bước 2: Chạy server
-
-java -jar -server target/HSO_Re_2-1.0-jar-with-dependencies.jar
+```java -jar -server target/HSO_Re_2-1.0-jar-with-dependencies.jar```
 
 ---
 
-<h2 align="center">CÁCH SỬA IP FILE CLIENT</h2>Sửa IP:
+<h2 align="center">CÁCH SỬA IP FILE CLIENT</h2>Sửa IP
 
 File: dw.class
 Dòng: 51, 63, ...
 
-Sửa Port:
+Sửa Port
 
 File: ft.class
 Dòng: 273 -> 278
@@ -59,9 +77,11 @@ Ví dụ:
 
 ---
 
-<h2 align="center">CẤU HÌNH KHÁC</h2>Kết nối Database:
+<h2 align="center">CẤU HÌNH KHÁC</h2>Kết nối Database
 
-File cấu hình: hso.conf
+File cấu hình:
+
+```hso.conf```
 
 ## ⚠️ Disclaimer
 
