@@ -1,0 +1,45 @@
+name: Build Chien Than Server JAR
+
+on:
+  push:
+    branches: [chien-than-server]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout server source
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            src
+            pom.xml
+
+      - name: Configure Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build complete server JAR
+        run: mvn -B -ntp clean package -DskipTests
+
+      - name: Verify JAR and renamed server
+        run: |
+          test -s target/HSO_Re_2-1.0-jar-with-dependencies.jar
+          unzip -p target/HSO_Re_2-1.0-jar-with-dependencies.jar META-INF/MANIFEST.MF | grep -q 'Main-Class: core.Start'
+          javap -verbose target/classes/core/ServerManager.class | grep -q 'Chiến Thần'
+          mkdir -p dist
+          cp target/HSO_Re_2-1.0-jar-with-dependencies.jar dist/ChienThan-Server.jar
+          sha256sum dist/ChienThan-Server.jar > dist/ChienThan-Server.sha256
+
+      - name: Upload Chiến Thần server build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChienThan-Server-Java17
+          path: dist/*
+          if-no-files-found: error
