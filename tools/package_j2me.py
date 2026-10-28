@@ -103,8 +103,16 @@ def main():
         print('MIDlet subclasses found:', midlet_candidates)
         print('Manifest attributes:', attrs)
         print('Newer class files:', sorted((name, v) for name, v in class_versions.items() if v > 48))
+        patches = {}
         if highest > 48:
-            raise ValueError('Not a CLDC-compatible JAR: class version > 48. Requires actual J2ME source and recompilation.')
+            newer = [name for name, ver in class_versions.items() if ver > 48]
+            if newer != ['dw.class']:
+                raise ValueError(f'Unexpected modern classes: {newer}')
+            raw = source.read('dw.class')
+            if b'java/lang/invoke/' in raw or b'java/lang/StringBuilder' in raw or b'StackMapTable' in raw:
+                raise ValueError('dw.class uses bytecode/features that cannot be safely downleveled')
+            patches['dw.class'] = raw[:6] + struct.pack('>H', 45) + raw[8:]
+            print('Patched dw.class from Java 8 (52) to CLDC 1.0 era (45) bytecode header')
         if not attrs.get('MIDlet-1'):
             if len(midlet_candidates) != 1:
                 raise ValueError('Could not uniquely identify MIDlet main class; client source or proper manifest required')
@@ -118,20 +126,26 @@ def main():
         midlet_class = attrs['MIDlet-1'].split(',')[-1].strip().replace('.', '/') + '.class'
         if midlet_class not in names:
             raise ValueError(f'MIDlet entry point is missing from JAR: {midlet_class}')
-        if old_meta and attributes(old_meta) == attrs:
+        if old_meta and attributes(old_meta) == attrs and not patches:
             shutil.copyfile(SOURCE, JAR)
             print('Manifest already valid; preserved original JAR unchanged')
         else:
-            print('Writing missing MIDlet manifest fields')
+            print('Rebuilding JAR with J2ME-compatible class/manifest')
             with zipfile.ZipFile(JAR, 'w') as result:
-                result.writestr('META-INF/MANIFEST.MF', manifest_bytes(attrs))
+                preserved = old_meta if old_meta and attributes(old_meta) == attrs else manifest_bytes(attrs)
+                result.writestr('META-INF/MANIFEST.MF', preserved)
                 for item in source.infolist():
                     path = item.filename
                     if path.upper() == 'META-INF/MANIFEST.MF':
                         continue
                     if re.fullmatch(r'META-INF/[^/]+\.(SF|RSA|DSA|EC)', path, flags=re.I):
                         continue
-                    result.writestr(item, source.read(path))
+                    result.writestr(item, patches.get(path) or source.read(path))
+    with zipfile.ZipFile(JAR) as check:
+        majors = [u2(check.read(n), 6) for n in check.namelist() if n.endswith('.class')]
+        if max(majors) > 48:
+            raise ValueError('Output JAR still contains incompatible classes')
+        print(f'Final output class versions: {min(majors)}..{max(majors)}')
     keys = ['MIDlet-Name', 'MIDlet-Version', 'MIDlet-Vendor',
             'MIDlet-1', 'MicroEdition-Configuration', 'MicroEdition-Profile']
     jad = [f'{key}: {attrs[key]}' for key in keys]
