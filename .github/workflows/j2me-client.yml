@@ -17,6 +17,10 @@ jobs:
           sparse-checkout: |
             client
             tools
+      - name: Inspect Java 8 class in MIDlet archive
+        run: |
+          unzip -p client/hso-client.jar dw.class > dw.class
+          javap -verbose -p dw.class | sed -n '1,170p'
       - name: Validate MIDlet and package JAR + JAD
         run: python3 tools/package_j2me.py
       - name: Upload ready-to-install files
