@@ -1,0 +1,27 @@
+name: Build HSO J2ME Client
+
+on:
+  push:
+    branches:
+      - j2me-client-build
+  workflow_dispatch:
+
+jobs:
+  package-client:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            client
+            tools
+      - name: Validate MIDlet and package JAR + JAD
+        run: python3 tools/package_j2me.py
+      - name: Upload ready-to-install files
+        uses: actions/upload-artifact@v4
+        with:
+          name: HSO-J2ME
+          path: dist/*
+          if-no-files-found: error
