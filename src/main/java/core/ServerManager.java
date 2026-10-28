@@ -24,6 +24,8 @@ import java.util.TimeZone;
 
 public class ServerManager implements Runnable {
 
+    public static final String SERVER_NAME = "Chiến Thần";
+
     private static ServerManager instance;
     private final Thread mythread;
     private Thread server_live;
@@ -72,7 +74,7 @@ public class ServerManager implements Runnable {
             this.server = new ServerSocket(Manager.gI().server_port);
             System.out.println("Khởi Chạy Trong " + (System.currentTimeMillis() - this.time) + "s");
             System.out.println();
-            System.out.println("Server Đang Chạy Ở Cổng " + Manager.gI().server_port +"" );
+            System.out.println("Máy chủ " + SERVER_NAME + " đang chạy ở cổng " + Manager.gI().server_port);
             while (this.running) {
                 Socket client = this.server.accept();
 //				synchronized (Session.client_entrys) {
@@ -108,7 +110,7 @@ public class ServerManager implements Runnable {
                         Mob_in_map.create_boss();
                     }
                     if (min % 7 == 0 && sec == 0) {
-                        Manager.gI().chatKTGprocess("Bạn Đang Chơi Game Hiệp Sĩ Ong Đất ver.1.2w67 Custom Không Reset Nhân Vật");
+                        Manager.gI().chatKTGprocess("Chào mừng đến với máy chủ " + SERVER_NAME + "! Chúc bạn chơi vui vẻ.");
                     }
                     if (min % 11 == 0 && sec == 0) {
                         Manager.gI().chatKTGprocess("Nhận điểm danh hàng ngày tại NPC Zulu, Đến Top BXH để xem thông tin cá nhân");
@@ -141,7 +143,7 @@ public class ServerManager implements Runnable {
                         if (hour == 10 && min == 00 && sec == 00) {
                             Event_1.list_nhankeo.clear();
                             Event_1.naukeo.start();
-                            Manager.gI().chatKTGprocess("@Server: Bắt đầu nấu kẹo, các hiệp sĩ có thể tăng tốc thời gian nấu");
+                            Manager.gI().chatKTGprocess("@" + SERVER_NAME + ": Bắt đầu nấu kẹo, các hiệp sĩ có thể tăng tốc thời gian nấu");
                         }
                         if (sec == 0 && min % 1 == 0) {
                             Event_1.naukeo.update(1);
@@ -152,10 +154,10 @@ public class ServerManager implements Runnable {
                     }
                     if (sec == 3 && min == 0 && (hour == 1 || hour == 13)) {
                         Manager.gI().chiem_mo.mo_open_atk();
-                        Manager.gI().chatKTGprocess("@Server : Thời gian chiếm mỏ đã đến!");
+                        Manager.gI().chatKTGprocess("@" + SERVER_NAME + ": Thời gian chiếm mỏ đã đến!");
                     } else if (sec == 3 && min == 0 && (hour == 2 || hour == 14)) {
                         Manager.gI().chiem_mo.mo_close_atk();
-                        Manager.gI().chatKTGprocess("@Server : Thời gian chiếm mỏ đã đóng!");
+                        Manager.gI().chatKTGprocess("@" + SERVER_NAME + ": Thời gian chiếm mỏ đã đóng!");
                     }
                     if ((hour % 3 == 0) && min == 0 && sec == 5) {
                      Manager.gI().bossTG.refresh();
