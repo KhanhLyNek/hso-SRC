@@ -101,6 +101,8 @@ def main():
         highest = max(class_versions.values())
         print(f'Client classes: {len(classes)}, bytecode class version: {min(class_versions.values())}..{highest}')
         print('MIDlet subclasses found:', midlet_candidates)
+        print('Manifest attributes:', attrs)
+        print('Newer class files:', sorted((name, v) for name, v in class_versions.items() if v > 48))
         if highest > 48:
             raise ValueError('Not a CLDC-compatible JAR: class version > 48. Requires actual J2ME source and recompilation.')
         if not attrs.get('MIDlet-1'):
